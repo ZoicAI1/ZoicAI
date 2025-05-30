@@ -1,0 +1,765 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ZOIC.CC - Advanced AI Trading Solutions</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0a0b0d;
+            color: #e2e8f0;
+            scroll-behavior: smooth;
+        }
+        
+        .gradient-bg {
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+        }
+        
+        .hero-gradient {
+            background: linear-gradient(135deg, rgba(30, 41, 59, 0.8) 0%, rgba(15, 23, 42, 0.9) 100%);
+        }
+        
+        .card-gradient {
+            background: linear-gradient(145deg, #1e293b 0%, #0f172a 100%);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .card-gradient::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            border-radius: 0.75rem;
+            padding: 2px;
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.8), rgba(124, 58, 237, 0.8));
+            -webkit-mask: 
+                linear-gradient(#fff 0 0) content-box, 
+                linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            z-index: -1;
+        }
+        
+        .card-gradient:hover::before {
+            opacity: 1;
+        }
+        
+        .card-gradient:hover {
+            transform: translateY(-5px);
+        }
+        
+        .nav-link {
+            position: relative;
+        }
+        
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: -2px;
+            left: 0;
+            background-color: #3b82f6;
+            transition: width 0.3s ease;
+        }
+        
+        .nav-link:hover::after {
+            width: 100%;
+        }
+        
+        .slide {
+            transition: transform 0.5s ease, opacity 0.5s ease;
+        }
+        
+        .slide.active {
+            opacity: 1;
+            transform: translateX(0);
+        }
+        
+        .slide.next {
+            transform: translateX(100%);
+            opacity: 0;
+        }
+        
+        .slide.prev {
+            transform: translateX(-100%);
+            opacity: 0;
+        }
+        
+        .btn-hover {
+            transition: all 0.3s ease;
+            transform: translateY(0);
+        }
+        
+        .btn-hover:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(59, 130, 246, 0.3);
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="gradient-bg fixed w-full z-50 border-b border-gray-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <span class="text-2xl font-bold text-blue-400">ZOIC<span class="text-white">.CC</span></span>
+                    </div>
+                    <div class="hidden md:block">
+                        <div class="ml-10 flex items-baseline space-x-8">
+                            <a href="#" class="nav-link text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium" onclick="showHome()">Home</a>
+                            <a href="#" class="nav-link text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium" onclick="showBinanceBot()">Binance Bot</a>
+                            <a href="#" class="nav-link text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium" onclick="showAbout()">About</a>
+                            <a href="#" class="nav-link text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium" onclick="showBlog()">Blog</a>
+                            <a href="#" class="nav-link text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium" onclick="showContact()">Contact</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="hidden md:block">
+                    <div class="ml-4 flex items-center md:ml-6">
+                        <button onclick="showSignup()" class="btn-hover bg-blue-500 hover:bg-blue-600 text-white px-6 py-2 rounded-md text-sm font-medium transition duration-300">
+                            Try Now
+                        </button>
+                    </div>
+                </div>
+                <div class="-mr-2 flex md:hidden">
+                    <button type="button" id="mobile-menu-button" class="bg-gray-900 inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-white hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white">
+                        <span class="sr-only">Open main menu</span>
+                        <i class="fas fa-bars"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile menu -->
+        <div class="md:hidden hidden" id="mobile-menu">
+            <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+                <a href="#" class="block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:text-white hover:bg-gray-800" onclick="showHome()">Home</a>
+                <a href="#" class="block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:text-white hover:bg-gray-800" onclick="showBinanceBot()">Binance Bot</a>
+                <a href="#" class="block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:text-white hover:bg-gray-800" onclick="showAbout()">About</a>
+                <a href="#" class="block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:text-white hover:bg-gray-800" onclick="showBlog()">Blog</a>
+                <a href="#" class="block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:text-white hover:bg-gray-800" onclick="showContact()">Contact</a>
+                <button onclick="showSignup()" class="btn-hover w-full text-left block px-3 py-2 rounded-md text-base font-medium bg-blue-500 hover:bg-blue-600 text-white">
+                    Try Now
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content Sections -->
+    <div class="pt-16">
+        <!-- Home Section -->
+        <section id="home" class="min-h-screen hero-gradient">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+                <div class="flex flex-col md:flex-row items-center">
+                    <div class="md:w-1/2 mb-10 md:mb-0">
+                        <h1 class="text-4xl md:text-6xl font-bold text-white mb-6">
+                            Advanced AI Trading <span class="text-blue-400">Solutions</span>
+                        </h1>
+                        <p class="text-lg text-gray-300 mb-8">
+                            ZOIC.CC leverages cutting-edge artificial intelligence to provide automated trading solutions that outperform traditional strategies.
+                        </p>
+                        <div class="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
+                            <button onclick="showSignup()" class="btn-hover bg-blue-500 hover:bg-blue-600 text-white px-8 py-3 rounded-md text-lg font-medium">
+                                Get Started
+                            </button>
+                            <button onclick="showBinanceBot()" class="btn-hover bg-gray-700 hover:bg-gray-600 text-white px-8 py-3 rounded-md text-lg font-medium">
+                                Learn More
+                            </button>
+                        </div>
+                    </div>
+                    <div class="md:w-1/2 relative">
+                        <div class="relative w-full h-96 md:h-auto">
+                            <img src="https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80" alt="AI Trading" class="rounded-xl shadow-2xl w-full h-full object-cover">
+                            <div class="absolute inset-0 bg-blue-500 opacity-20 rounded-xl"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Features Section -->
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+                <h2 class="text-3xl font-bold text-center text-white mb-16">
+                    Why Choose <span class="text-blue-400">ZOIC.CC</span>
+                </h2>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <div class="card-gradient p-8 rounded-xl">
+                        <div class="text-blue-400 text-4xl mb-4">
+                            <i class="fas fa-brain"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-white mb-3">Advanced AI Algorithms</h3>
+                        <p class="text-gray-300">
+                            Our proprietary AI models analyze market data in real-time, identifying profitable opportunities with precision.
+                        </p>
+                    </div>
+                    <div class="card-gradient p-8 rounded-xl">
+                        <div class="text-blue-400 text-4xl mb-4">
+                            <i class="fas fa-shield-alt"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-white mb-3">Risk Management</h3>
+                        <p class="text-gray-300">
+                            Built-in safeguards protect your capital while maximizing returns through intelligent position sizing.
+                        </p>
+                    </div>
+                    <div class="card-gradient p-8 rounded-xl">
+                        <div class="text-blue-400 text-4xl mb-4">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-white mb-3">Proven Performance</h3>
+                        <p class="text-gray-300">
+                            Backtested and live-tested strategies that consistently outperform manual trading approaches.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Testimonials Slider -->
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+                <h2 class="text-3xl font-bold text-center text-white mb-16">
+                    What Our <span class="text-blue-400">Clients Say</span>
+                </h2>
+                <div class="relative overflow-hidden h-64">
+                    <div class="slide active absolute inset-0 flex flex-col items-center justify-center p-8 card-gradient rounded-xl">
+                        <p class="text-gray-300 text-lg italic mb-6 text-center">
+                            "ZOIC.CC's Binance bot has completely transformed my trading. I'm seeing consistent returns with minimal effort."
+                        </p>
+                        <div class="flex items-center">
+                            <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="User" class="w-12 h-12 rounded-full mr-4">
+                            <div>
+                                <p class="text-white font-medium">Michael T.</p>
+                                <p class="text-gray-400 text-sm">Professional Trader</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="slide next absolute inset-0 flex flex-col items-center justify-center p-8 card-gradient rounded-xl">
+                        <p class="text-gray-300 text-lg italic mb-6 text-center">
+                            "The risk management features give me peace of mind while the AI handles the complex analysis."
+                        </p>
+                        <div class="flex items-center">
+                            <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="User" class="w-12 h-12 rounded-full mr-4">
+                            <div>
+                                <p class="text-white font-medium">Sarah L.</p>
+                                <p class="text-gray-400 text-sm">Crypto Investor</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="slide next absolute inset-0 flex flex-col items-center justify-center p-8 card-gradient rounded-xl">
+                        <p class="text-gray-300 text-lg italic mb-6 text-center">
+                            "After trying several trading bots, ZOIC.CC stands out for its reliability and performance."
+                        </p>
+                        <div class="flex items-center">
+                            <img src="https://randomuser.me/api/portraits/men/75.jpg" alt="User" class="w-12 h-12 rounded-full mr-4">
+                            <div>
+                                <p class="text-white font-medium">David K.</p>
+                                <p class="text-gray-400 text-sm">Day Trader</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex justify-center mt-8 space-x-2">
+                    <button onclick="prevSlide()" class="w-10 h-10 rounded-full bg-gray-800 text-white flex items-center justify-center hover:bg-gray-700">
+                        <i class="fas fa-chevron-left"></i>
+                    </button>
+                    <button onclick="nextSlide()" class="w-10 h-10 rounded-full bg-gray-800 text-white flex items-center justify-center hover:bg-gray-700">
+                        <i class="fas fa-chevron-right"></i>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Binance Bot Section -->
+        <section id="binance-bot" class="min-h-screen gradient-bg hidden">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+                <div class="flex flex-col md:flex-row items-center">
+                    <div class="md:w-1/2 mb-10 md:mb-0">
+                        <h1 class="text-4xl md:text-5xl font-bold text-white mb-6">
+                            Binance Trading <span class="text-blue-400">Bot</span>
+                        </h1>
+                        <p class="text-lg text-gray-300 mb-8">
+                            Our advanced Binance trading bot leverages machine learning to execute trades with precision, 24/7. It analyzes market trends, identifies opportunities, and executes trades faster than any human could.
+                        </p>
+                        <div class="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
+                            <button onclick="showSignup()" class="btn-hover bg-blue-500 hover:bg-blue-600 text-white px-8 py-3 rounded-md text-lg font-medium">
+                                Start Free Trial
+                            </button>
+                            <button onclick="showContact()" class="btn-hover bg-gray-700 hover:bg-gray-600 text-white px-8 py-3 rounded-md text-lg font-medium">
+                                Contact Sales
+                            </button>
+                        </div>
+                    </div>
+                    <div class="md:w-1/2">
+                        <div class="relative w-full h-96 md:h-auto">
+                            <img src="https://images.unsplash.com/photo-1642790554518-28607d5b9b5e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80" alt="Binance Trading Bot" class="rounded-xl shadow-2xl w-full h-full object-cover">
+                            <div class="absolute inset-0 bg-blue-500 opacity-20 rounded-xl"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+                <h2 class="text-3xl font-bold text-center text-white mb-16">
+                    Binance Bot <span class="text-blue-400">Features</span>
+                </h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div class="card-gradient p-8 rounded-xl">
+                        <div class="flex items-start">
+                            <div class="text-blue-400 text-2xl mr-4">
+                                <i class="fas fa-robot"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-xl font-bold text-white mb-3">Automated Trading</h3>
+                                <p class="text-gray-300">
+                                    Set your parameters and let the bot trade for you 24/7, never missing an opportunity even while you sleep.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-gradient p-8 rounded-xl">
+                        <div class="flex items-start">
+                            <div class="text-blue-400 text-2xl mr-4">
+                                <i class="fas fa-chart-bar"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-xl font-bold text-white mb-3">Market Analysis</h3>
+                                <p class="text-gray-300">
+                                    Real-time analysis of market conditions, order books, and historical data to make informed trading decisions.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-gradient p-8 rounded-xl">
+                        <div class="flex items-start">
+                            <div class="text-blue-400 text-2xl mr-4">
+                                <i class="fas fa-sliders-h"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-xl font-bold text-white mb-3">Custom Strategies</h3>
+                                <p class="text-gray-300">
+                                    Choose from pre-built strategies or customize your own based on technical indicators and market signals.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-gradient p-8 rounded-xl">
+                        <div class="flex items-start">
+                            <div class="text-blue-400 text-2xl mr-4">
+                                <i class="fas fa-bell"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-xl font-bold text-white mb-3">Real-time Alerts</h3>
+                                <p class="text-gray-300">
+                                    Get notified about important market movements, executed trades, and portfolio changes.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- About Section -->
+        <section id="about" class="min-h-screen gradient-bg hidden">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+                <div class="text-center mb-20">
+                    <h1 class="text-4xl md:text-5xl font-bold text-white mb-6">
+                        About <span class="text-blue-400">ZOIC.CC</span>
+                    </h1>
+                    <p class="text-lg text-gray-300 max-w-3xl mx-auto">
+                        We're a team of AI researchers, financial experts, and software engineers dedicated to revolutionizing trading through artificial intelligence.
+                    </p>
+                </div>
+
+                <div class="flex flex-col md:flex-row items-center mb-20">
+                    <div class="md:w-1/2 mb-10 md:mb-0">
+                        <h2 class="text-3xl font-bold text-white mb-6">
+                            Our <span class="text-blue-400">Mission</span>
+                        </h2>
+                        <p class="text-lg text-gray-300 mb-6">
+                            To democratize access to institutional-grade trading tools powered by artificial intelligence, making sophisticated trading strategies available to everyone.
+                        </p>
+                        <p class="text-lg text-gray-300">
+                            We believe that AI can level the playing field in financial markets, giving individual traders the same advantages previously available only to large institutions.
+                        </p>
+                    </div>
+                    <div class="md:w-1/2">
+                        <div class="relative w-full h-96 md:h-auto">
+                            <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80" alt="Our Mission" class="rounded-xl shadow-2xl w-full h-full object-cover">
+                            <div class="absolute inset-0 bg-blue-500 opacity-20 rounded-xl"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex flex-col md:flex-row-reverse items-center">
+                    <div class="md:w-1/2 mb-10 md:mb-0">
+                        <h2 class="text-3xl font-bold text-white mb-6">
+                            Our <span class="text-blue-400">Technology</span>
+                        </h2>
+                        <p class="text-lg text-gray-300 mb-6">
+                            We combine deep learning, reinforcement learning, and traditional quantitative finance techniques to create our trading algorithms.
+                        </p>
+                        <p class="text-lg text-gray-300">
+                            Our models are continuously learning from market data, adapting to changing conditions to maintain optimal performance.
+                        </p>
+                    </div>
+                    <div class="md:w-1/2">
+                        <div class="relative w-full h-96 md:h-auto">
+                            <img src="https://images.unsplash.com/photo-1620712943543-bcc4688e7485?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=765&q=80" alt="Our Technology" class="rounded-xl shadow-2xl w-full h-full object-cover">
+                            <div class="absolute inset-0 bg-blue-500 opacity-20 rounded-xl"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Blog Section -->
+        <section id="blog" class="min-h-screen gradient-bg hidden">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+                <div class="text-center mb-20">
+                    <h1 class="text-4xl md:text-5xl font-bold text-white mb-6">
+                        ZOIC.CC <span class="text-blue-400">Blog</span>
+                    </h1>
+                    <p class="text-lg text-gray-300 max-w-3xl mx-auto">
+                        Insights, strategies, and updates from our team of experts.
+                    </p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <div class="card-gradient rounded-xl overflow-hidden hover:shadow-lg transition duration-300">
+                        <div class="h-48 overflow-hidden">
+                            <img src="https://images.unsplash.com/photo-1639762681057-408e52192e55?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1632&q=80" alt="Blog Post" class="w-full h-full object-cover">
+                        </div>
+                        <div class="p-6">
+                            <div class="text-blue-400 text-sm mb-2">AI Trading</div>
+                            <h3 class="text-xl font-bold text-white mb-3">How AI is Changing Crypto Trading</h3>
+                            <p class="text-gray-300 text-sm mb-4">
+                                Explore the ways artificial intelligence is revolutionizing cryptocurrency trading strategies and risk management.
+                            </p>
+                            <a href="#" class="text-blue-400 text-sm font-medium hover:text-blue-300">Read More →</a>
+                        </div>
+                    </div>
+                    <div class="card-gradient rounded-xl overflow-hidden hover:shadow-lg transition duration-300">
+                        <div class="h-48 overflow-hidden">
+                            <img src="https://images.unsplash.com/photo-1642790554518-28607d5b9b5e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80" alt="Blog Post" class="w-full h-full object-cover">
+                        </div>
+                        <div class="p-6">
+                            <div class="text-blue-400 text-sm mb-2">Strategy</div>
+                            <h3 class="text-xl font-bold text-white mb-3">Backtesting Your Trading Bot</h3>
+                            <p class="text-gray-300 text-sm mb-4">
+                                Learn the importance of proper backtesting and how to evaluate your trading bot's performance before going live.
+                            </p>
+                            <a href="#" class="text-blue-400 text-sm font-medium hover:text-blue-300">Read More →</a>
+                        </div>
+                    </div>
+                    <div class="card-gradient rounded-xl overflow-hidden hover:shadow-lg transition duration-300">
+                        <div class="h-48 overflow-hidden">
+                            <img src="https://images.unsplash.com/photo-1621761191319-c6fb62004040?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=687&q=80" alt="Blog Post" class="w-full h-full object-cover">
+                        </div>
+                        <div class="p-6">
+                            <div class="text-blue-400 text-sm mb-2">Market Analysis</div>
+                            <h3 class="text-xl font-bold text-white mb-3">Current Crypto Market Trends</h3>
+                            <p class="text-gray-300 text-sm mb-4">
+                                Our analysts break down the latest trends in the cryptocurrency markets and what they mean for automated trading.
+                            </p>
+                            <a href="#" class="text-blue-400 text-sm font-medium hover:text-blue-300">Read More →</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="text-center mt-16">
+                    <button class="btn-hover bg-blue-500 hover:bg-blue-600 text-white px-8 py-3 rounded-md text-lg font-medium">
+                        View All Articles
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Contact Section -->
+        <section id="contact" class="min-h-screen gradient-bg hidden">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+                <div class="flex flex-col md:flex-row">
+                    <div class="md:w-1/2 mb-10 md:mb-0 md:pr-10">
+                        <h1 class="text-4xl md:text-5xl font-bold text-white mb-6">
+                            Contact <span class="text-blue-400">Us</span>
+                        </h1>
+                        <p class="text-lg text-gray-300 mb-8">
+                            Have questions about our products or services? Our team is here to help.
+                        </p>
+                        
+                        <div class="space-y-6">
+                            <div class="flex items-start">
+                                <div class="text-blue-400 text-xl mr-4 mt-1">
+                                    <i class="fas fa-envelope"></i>
+                                </div>
+                                <div>
+                                    <h3 class="text-lg font-bold text-white mb-1">Email</h3>
+                                    <p class="text-gray-300">support@zoic.cc</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start">
+                                <div class="text-blue-400 text-xl mr-4 mt-1">
+                                    <i class="fas fa-headset"></i>
+                                </div>
+                                <div>
+                                    <h3 class="text-lg font-bold text-white mb-1">Support</h3>
+                                    <p class="text-gray-300">24/7 customer support via chat</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start">
+                                <div class="text-blue-400 text-xl mr-4 mt-1">
+                                    <i class="fas fa-map-marker-alt"></i>
+                                </div>
+                                <div>
+                                    <h3 class="text-lg font-bold text-white mb-1">Location</h3>
+                                    <p class="text-gray-300">San Francisco, CA</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="md:w-1/2">
+                        <div class="card-gradient p-8 rounded-xl">
+                            <h2 class="text-2xl font-bold text-white mb-6">Send us a message</h2>
+                            <form>
+                                <div class="mb-4">
+                                    <label for="name" class="block text-gray-300 text-sm font-medium mb-2">Name</label>
+                                    <input type="text" id="name" class="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                </div>
+                                <div class="mb-4">
+                                    <label for="email" class="block text-gray-300 text-sm font-medium mb-2">Email</label>
+                                    <input type="email" id="email" class="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                </div>
+                                <div class="mb-4">
+                                    <label for="subject" class="block text-gray-300 text-sm font-medium mb-2">Subject</label>
+                                    <select id="subject" class="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                        <option>General Inquiry</option>
+                                        <option>Technical Support</option>
+                                        <option>Sales Question</option>
+                                        <option>Partnership</option>
+                                    </select>
+                                </div>
+                                <div class="mb-6">
+                                    <label for="message" class="block text-gray-300 text-sm font-medium mb-2">Message</label>
+                                    <textarea id="message" rows="4" class="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
+                                </div>
+                                <button type="submit" class="btn-hover w-full bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-md text-lg font-medium">
+                                    Send Message
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Signup Section -->
+        <section id="signup" class="min-h-screen gradient-bg hidden">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+                <div class="max-w-md mx-auto">
+                    <div class="text-center mb-12">
+                        <h1 class="text-4xl font-bold text-white mb-4">
+                            Get Started with <span class="text-blue-400">ZOIC.CC</span>
+                        </h1>
+                        <p class="text-gray-300">
+                            Start your free trial today and experience the power of AI trading.
+                        </p>
+                    </div>
+                    
+                    <div class="card-gradient p-8 rounded-xl">
+                        <form>
+                            <div class="mb-4">
+                                <label for="signup-name" class="block text-gray-300 text-sm font-medium mb-2">Full Name</label>
+                                <input type="text" id="signup-name" class="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            </div>
+                            <div class="mb-4">
+                                <label for="signup-email" class="block text-gray-300 text-sm font-medium mb-2">Email Address</label>
+                                <input type="email" id="signup-email" class="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            </div>
+                            <div class="mb-4">
+                                <label for="signup-password" class="block text-gray-300 text-sm font-medium mb-2">Password</label>
+                                <input type="password" id="signup-password" class="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            </div>
+                            <div class="mb-6">
+                                <label for="signup-plan" class="block text-gray-300 text-sm font-medium mb-2">Select Plan</label>
+                                <select id="signup-plan" class="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                    <option>Starter - Free Trial</option>
+                                    <option>Professional - $49/month</option>
+                                    <option>Enterprise - Custom Pricing</option>
+                                </select>
+                            </div>
+                            <button type="submit" class="btn-hover w-full bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-md text-lg font-medium mb-4">
+                                Create Account
+                            </button>
+                            <p class="text-gray-400 text-sm text-center">
+                                By signing up, you agree to our <a href="#" class="text-blue-400 hover:underline">Terms of Service</a> and <a href="#" class="text-blue-400 hover:underline">Privacy Policy</a>.
+                            </p>
+                        </form>
+                    </div>
+                    
+                    <div class="text-center mt-8">
+                        <p class="text-gray-300">
+                            Already have an account? <a href="#" class="text-blue-400 hover:underline">Log in</a>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Footer -->
+    <footer class="gradient-bg border-t border-gray-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div>
+                    <span class="text-2xl font-bold text-blue-400">ZOIC<span class="text-white">.CC</span></span>
+                    <p class="text-gray-400 mt-4">
+                        Advanced AI trading solutions for cryptocurrency markets.
+                    </p>
+                    <div class="flex space-x-4 mt-6">
+                        <a href="https://x.com/Zoic_CC" class="text-gray-400 hover:text-white">
+                            <i class="fab fa-twitter"></i>
+                        </a>
+            
+                        <a href="https://discord.gg/8P4GaXJGPw" class="text-gray-400 hover:text-white">
+                            <i class="fab fa-discord"></i>
+                        </a>
+                    </div>
+                </div>
+                <div>
+                    <h3 class="text-white font-medium mb-4">Products</h3>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-gray-400 hover:text-white" onclick="showBinanceBot()">Binance Trading Bot</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white">AI Portfolio Manager</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white">Market Scanner</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white">API Access</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-white font-medium mb-4">Resources</h3>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-gray-400 hover:text-white" onclick="showBlog()">Blog</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white">Documentation</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white">Guides</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white">Webinars</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-white font-medium mb-4">Company</h3>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-gray-400 hover:text-white" onclick="showAbout()">About Us</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white" onclick="showContact()">Contact</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white">Careers</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white">Legal</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="border-t border-gray-800 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center">
+                <p class="text-gray-400 text-sm">
+                    © 2025 ZOIC.CC. All rights reserved.
+                </p>
+                <div class="flex space-x-6 mt-4 md:mt-0">
+                    <a href="#" class="text-gray-400 hover:text-white text-sm">Privacy Policy</a>
+                    <a href="#" class="text-gray-400 hover:text-white text-sm">Terms of Service</a>
+                    <a href="#" class="text-gray-400 hover:text-white text-sm">Cookie Policy</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Mobile menu toggle
+        document.getElementById('mobile-menu-button').addEventListener('click', function() {
+            const menu = document.getElementById('mobile-menu');
+            menu.classList.toggle('hidden');
+        });
+
+        // Navigation functions
+        function hideAllSections() {
+            document.querySelectorAll('section[id]').forEach(section => {
+                section.classList.add('hidden');
+            });
+        }
+
+        function showHome() {
+            hideAllSections();
+            document.getElementById('home').classList.remove('hidden');
+            window.scrollTo(0, 0);
+        }
+
+        function showBinanceBot() {
+            hideAllSections();
+            document.getElementById('binance-bot').classList.remove('hidden');
+            window.scrollTo(0, 0);
+        }
+
+        function showAbout() {
+            hideAllSections();
+            document.getElementById('about').classList.remove('hidden');
+            window.scrollTo(0, 0);
+        }
+
+        function showBlog() {
+            hideAllSections();
+            document.getElementById('blog').classList.remove('hidden');
+            window.scrollTo(0, 0);
+        }
+
+        function showContact() {
+            hideAllSections();
+            document.getElementById('contact').classList.remove('hidden');
+            window.scrollTo(0, 0);
+        }
+
+        function showSignup() {
+            hideAllSections();
+            document.getElementById('signup').classList.remove('hidden');
+            window.scrollTo(0, 0);
+        }
+
+        // Testimonial slider
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.slide');
+
+        function updateSlides() {
+            slides.forEach((slide, index) => {
+                slide.classList.remove('active', 'prev', 'next');
+                
+                if (index === currentSlide) {
+                    slide.classList.add('active');
+                } else if (index === (currentSlide + 1) % slides.length) {
+                    slide.classList.add('next');
+                } else if (index === (currentSlide - 1 + slides.length) % slides.length) {
+                    slide.classList.add('prev');
+                }
+            });
+        }
+
+        function nextSlide() {
+            currentSlide = (currentSlide + 1) % slides.length;
+            updateSlides();
+        }
+
+        function prevSlide() {
+            currentSlide = (currentSlide - 1 + slides.length) % slides.length;
+            updateSlides();
+        }
+
+        // Initialize
+        updateSlides();
+        
+        // Auto-rotate testimonials
+        setInterval(nextSlide, 5000);
+    </script>
+</body>
+</html>
